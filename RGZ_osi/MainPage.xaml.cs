@@ -22,15 +22,20 @@ namespace RGZ_osi
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private static Random rand = new Random();
+
         public MainPage()
         {
             this.InitializeComponent();
         }
 
-        private void Button1_Click(object sender, RoutedEventArgs e)
+        private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            TextBlock1.Text = "Goodbye, world!" + rand.Next().ToString();
+            App.Current.Exit();
+        }
+        private async void About_Click(object sender, RoutedEventArgs e)
+        {
+            MainPage_About about = new MainPage_About();
+            await about.ShowAsync();
         }
     }
 }

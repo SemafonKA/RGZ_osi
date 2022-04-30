@@ -32,13 +32,18 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="RGZ_osi.App">
       <uap:VisualElements
-        DisplayName="RGZ_osi"
+        DisplayName="Симулятор диспетчера процессов"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="RGZ_osi"
+        Description="Симулятор диспетчера процессов"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/>
+          <uap:Rotation Preference="landscapeFlipped"/>
+          <uap:Rotation Preference="portraitFlipped"/>
+          <uap:Rotation Preference="portrait"/></uap:InitialRotationPreference>
       </uap:VisualElements>
     </Application>
   </Applications>

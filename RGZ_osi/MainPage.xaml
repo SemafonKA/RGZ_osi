@@ -12,33 +12,35 @@
     </Page.Background>
 
     <Grid>
-        <Grid.FocusVisualPrimaryBrush>
-            <SolidColorBrush
-                Color="Black" />
-        </Grid.FocusVisualPrimaryBrush>
-        <TextBlock
-            Name="TextBlock1"
-            FontSize="60"
-            FocusVisualPrimaryBrush="Black"
-            Text="Hello, world"
-            HorizontalAlignment="Center"
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="auto" />
+            <RowDefinition
+                Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel
+            Grid.Row="0"
             VerticalAlignment="Center"
-            TextWrapping="NoWrap"
-            TextAlignment="Center">
-            <TextBlock.Foreground>
-                <SolidColorBrush
-                    Color="{ThemeResource SystemBaseHighColor}" />
-            </TextBlock.Foreground>
-        </TextBlock>
-        <Button
-            x:Name="Button1"
-            Content="Press"
-            Margin="0,0,0,200"
-            VerticalAlignment="Bottom"
-            FontSize="72"
-            HorizontalAlignment="Center" 
-            CornerRadius="8" 
-            Click="Button1_Click"/>
-      
+            Orientation="Horizontal">
+            <Button
+                x:Name="Menu"
+                Content="Меню"
+                FontSize="24"
+                Background="Transparent"
+                Margin="0,0,20,0"
+                CornerRadius="8" >
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Text="О программе"
+                            Click="About_Click" />
+                        <MenuFlyoutItem
+                            Text="Выход"
+                            Click="Exit_Click" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+
+        </StackPanel>
     </Grid>
 </Page>
