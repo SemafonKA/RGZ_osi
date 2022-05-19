@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="RGZ_osi.App">
       <uap:VisualElements
-        DisplayName="Симулятор диспетчера процессов"
+        DisplayName="Имитатор диспетчера ОС. Очередь с приоритетом"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="Симулятор диспетчера процессов"

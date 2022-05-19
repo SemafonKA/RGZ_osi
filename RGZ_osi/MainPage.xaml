@@ -12,12 +12,15 @@
     </Page.Background>
 
     <Grid>
+        <!--Определение размеров для шапки и окна основного приложения-->
         <Grid.RowDefinitions>
             <RowDefinition
                 Height="auto" />
             <RowDefinition
                 Height="*" />
         </Grid.RowDefinitions>
+        
+        <!--Определение шапки приложения-->
         <StackPanel
             Grid.Row="0"
             VerticalAlignment="Center"
@@ -42,5 +45,11 @@
             </Button>
 
         </StackPanel>
+        
+        <!--Определение основного окна приложения-->
+        <Grid
+            Grid.Row="1">
+            
+        </Grid>
     </Grid>
 </Page>
