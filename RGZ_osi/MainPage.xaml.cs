@@ -35,5 +35,10 @@ namespace RGZ_osi
             var about = new MainPage_About();
             await about.ShowAsync();
         }
+
+        private void MakeNewProcessButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

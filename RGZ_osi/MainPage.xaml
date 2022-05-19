@@ -5,10 +5,12 @@
     xmlns:local="using:RGZ_osi"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    MinHeight="570"
+    MinWidth="1130">
     <Page.Background>
         <SolidColorBrush
-            Color="{ThemeResource SystemAltMediumColor}" />
+            Color="{ThemeResource SystemChromeAltHighColor}" />
     </Page.Background>
 
     <Grid>
@@ -19,7 +21,7 @@
             <RowDefinition
                 Height="*" />
         </Grid.RowDefinitions>
-        
+
         <!--Определение шапки приложения-->
         <StackPanel
             Grid.Row="0"
@@ -28,28 +30,189 @@
             <Button
                 x:Name="Menu"
                 Content="Меню"
-                FontSize="24"
+                FontSize="16"
                 Background="Transparent"
                 Margin="0,0,20,0"
-                CornerRadius="8" >
+                CornerRadius="3">
                 <Button.Flyout>
                     <MenuFlyout>
                         <MenuFlyoutItem
                             Text="О программе"
                             Click="About_Click" />
+                        <MenuFlyoutSeparator />
                         <MenuFlyoutItem
                             Text="Выход"
                             Click="Exit_Click" />
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
-
         </StackPanel>
-        
+
         <!--Определение основного окна приложения-->
         <Grid
             Grid.Row="1">
-            
+            <!--Определение разметки основного приложения-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="2*" />
+                <ColumnDefinition
+                    Width="3*" />
+                <ColumnDefinition
+                    Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <!--Левая сторона окна приложения-->
+            <Grid
+                Grid.Column="0">
+                <!--Разметка левой стороны окна-->
+                <Grid.RowDefinitions>
+                    <RowDefinition
+                        Height="4*"
+                        MinHeight="100" />
+                    <RowDefinition
+                        Height="2*" />
+                </Grid.RowDefinitions>
+
+                <!--Часть окна добавления процессов-->
+                <StackPanel
+                    Grid.Row="0"
+                    VerticalAlignment="Center"
+                    CornerRadius="8"
+                    Margin="5">
+                    <StackPanel.Background>
+                        <AcrylicBrush
+                            TintColor="{ThemeResource SystemAltMediumHighColor}" />
+                    </StackPanel.Background>
+
+                    <!--Поля для ввода данных процесса-->
+                    <StackPanel>
+                        <TextBlock
+                            Text="Добавление процесса"
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            Margin="30"
+                            TextWrapping="WrapWholeWords" />
+                        <TextBox
+                            x:Name="ProcessNameBox"
+                            FontSize="18"
+                            HorizontalAlignment="Stretch"
+                            Margin="25,7,25,7"
+                            Width="auto"
+                            MaxWidth="600"
+                            PlaceholderText="Имя:"
+                            CornerRadius="3"
+                            ToolTipService.ToolTip="Имя для создаваемого процесса (могут совпадать)" />
+                        <TextBox
+                            x:Name="ProcessIdBox"
+                            FontSize="18"
+                            HorizontalAlignment="Stretch"
+                            Margin="25,7,25,7"
+                            Width="auto"
+                            MaxWidth="600"
+                            PlaceholderText="ID:"
+                            CornerRadius="3"
+                            ToolTipService.ToolTip="ID создаваемого процесса (должен быть индивидуальным)" />
+                        <TextBox
+                            x:Name="ProcessPriorityBox"
+                            FontSize="18"
+                            HorizontalAlignment="Stretch"
+                            Margin="25,7,25,7"
+                            Width="auto"
+                            MaxWidth="600"
+                            PlaceholderText="Приоритет:"
+                            CornerRadius="3"
+                            ToolTipService.ToolTip="Приоритет процесса (целое число, больше - выше)" />
+                        <TextBox
+                            x:Name="ProcessSizeBox"
+                            FontSize="18"
+                            HorizontalAlignment="Stretch"
+                            Margin="25,7,25,7"
+                            Width="auto"
+                            MaxWidth="600"
+                            PlaceholderText="Время исполнения:"
+                            CornerRadius="3"
+                            ToolTipService.ToolTip="То, сколько квантов времени будет исполняться процесс" />
+                    </StackPanel>
+
+                    <!--Кнопка добавления процесса-->
+                    <Button
+                        x:Name="MakeNewProcessButton"
+                        Click="MakeNewProcessButton_Click"
+                        Margin="25,7,25,7"
+                        HorizontalAlignment="Center"
+                        Content="Добавить"
+                        CornerRadius="3" />
+
+                </StackPanel>
+
+                <!--Часть с настройкой кванта времени и кнопкой старта-->
+                <StackPanel
+                    Grid.Row="1"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    CornerRadius="8">
+
+                    <StackPanel.Background>
+                        <AcrylicBrush
+                            TintColor="{ThemeResource SystemAltMediumHighColor}" />
+                    </StackPanel.Background>
+
+                    <!--Панелька задания величины кванта времени-->
+                    <Grid
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        ToolTipService.ToolTip="Задаёт время одного кванта времени процессора в мс"
+                        Margin="0,5,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition
+                                Width="auto" />
+                            <ColumnDefinition
+                                Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            FontSize="18"
+                            Text="Время кванта:"
+                            Margin="25,5,5,5"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center" />
+                        <TextBox
+                            Grid.Column="1"
+                            x:Name="QuantTimeBox"
+                            Margin="5,5,25,5"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            PlaceholderText="(в мс)"
+                            TextAlignment="Start"
+                            CornerRadius="3" />
+                    </Grid>
+
+                    <!--Кнопка старта и остановки работы алгоритма-->
+                    <Button
+                        x:Name="StartButton"
+                        Content="Пуск"
+                        HorizontalAlignment="Center"
+                        FontSize="18"
+                        CornerRadius="3"
+                        Margin="15" />
+                </StackPanel>
+            </Grid>
+
+            <!--Центральная сторона окна приложения--><!--
+            <Grid
+                Grid.Column="1">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition
+                        Height="*" />
+                    <RowDefinition
+                        Height="6*" />
+                </Grid.RowDefinitions>
+
+                <ListBox>
+
+                </ListBox>
+            </Grid>-->
         </Grid>
     </Grid>
 </Page>
