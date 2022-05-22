@@ -2,12 +2,13 @@
     x:Class="RGZ_osi.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:RGZ_osi"
+    xmlns:local="using:Manager"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     MinHeight="570"
     MinWidth="1130">
+    
     <Page.Background>
         <SolidColorBrush
             Color="{ThemeResource SystemChromeAltHighColor}" />
@@ -198,21 +199,158 @@
                 </StackPanel>
             </Grid>
 
-            <!--Центральная сторона окна приложения--><!--
+            <!--Центральная сторона окна приложения-->
             <Grid
-                Grid.Column="1">
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                CornerRadius="8">
+                <Grid.Background>
+                    <AcrylicBrush
+                        TintColor="{ThemeResource SystemAltMediumHighColor}" />
+                </Grid.Background>
 
+                <Grid.RowDefinitions>
+                    <RowDefinition 
+                        Height="auto"/>
+                    <RowDefinition 
+                        Height="auto"/>
+                    <RowDefinition 
+                        Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <!--Заголовок таблицы-->
+                <TextBlock
+                    Grid.Row="0"
+                    Text="Очередь процессов: "
+                    HorizontalAlignment="Center"
+                    FontSize="25" />
+
+                <!--Шапка таблицы-->
+                <Grid
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    Width="{Binding ActualWidth, ElementName=ProcessQueueList}">
+
+                    <!--Разметка сетки-->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                            Width="100" />
+                        <ColumnDefinition
+                            Width="50" />
+                        <ColumnDefinition
+                            Width="80" />
+                        <ColumnDefinition
+                            Width="100" />
+                        <ColumnDefinition
+                            Width="100" />
+                        <ColumnDefinition
+                            Width="100" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="Имя"
+                        Margin="10" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Text="Id"
+                        Margin="10" />
+                    <TextBlock
+                        Grid.Column="2"
+                        Text="Приор."
+                        Margin="10" />
+                    <TextBlock
+                        Grid.Column="3"
+                        Text="Нач. размер"
+                        Margin="10" />
+                    <TextBlock
+                        Grid.Column="4"
+                        Text="Тек. размер"
+                        Margin="10" />
+                    <TextBlock
+                        Grid.Column="5"
+                        Text="% выполн."
+                        Margin="10" />
+                </Grid>
+
+                <!--Таблица - очередь процессов на выполнение-->
+                <ListView
+                    Grid.Row="2"
+                    Name="ProcessQueueList"
+                    HorizontalAlignment="Center"
+                    Height="600">
+
+                    <!--Шаблон элементов таблицы-->
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <!--Разметка сетки-->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition
+                                        Width="100" />
+                                    <ColumnDefinition
+                                        Width="50" />
+                                    <ColumnDefinition
+                                        Width="80" />
+                                    <ColumnDefinition
+                                        Width="100" />
+                                    <ColumnDefinition
+                                        Width="100" />
+                                    <ColumnDefinition
+                                        Width="100" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Text="{Binding Name}"
+                                    Grid.Column="0" />
+                                <TextBlock
+                                    Text="{Binding Id}"
+                                    Grid.Column="1" />
+                                <TextBlock
+                                    Text="{Binding Priority}"
+                                    Grid.Column="2" />
+                                <TextBlock
+                                    Text="{Binding InitialSize}"
+                                    Grid.Column="3" />
+                                <TextBlock
+                                    Text="{Binding Size}"
+                                    Grid.Column="4" />
+                                <TextBlock
+                                    Text="{Binding CompletePercentage}"
+                                    Grid.Column="5" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                    <ListView.Items>
+                        <local:Process
+                            Name="EXAMPLE1"
+                            Id="255"
+                            Priority="1"
+                            InitialSize="5"
+                            Size="3" />
+                        <local:Process
+                            Name="EXAMPLE2"
+                            Id="235"
+                            Priority="1"
+                            InitialSize="5"
+                            Size="5" />
+                    </ListView.Items>
+                </ListView>
+            </Grid>
+
+            <!--Правая сторона окна приложения-->
+            <Grid
+                Grid.Column="2">
+                <!--Объявление размера сетки окон-->
                 <Grid.RowDefinitions>
                     <RowDefinition
                         Height="*" />
                     <RowDefinition
-                        Height="6*" />
+                        Height="*" />
                 </Grid.RowDefinitions>
-
-                <ListBox>
-
-                </ListBox>
-            </Grid>-->
+            </Grid>
         </Grid>
     </Grid>
 </Page>

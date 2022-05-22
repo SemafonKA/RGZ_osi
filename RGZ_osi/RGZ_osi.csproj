@@ -125,6 +125,7 @@
     <Compile Include="MainPage_About.xaml.cs">
       <DependentUpon>MainPage_About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Manager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +158,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DotNetty.Common">
+      <Version>0.7.2</Version>
+    </PackageReference>
+    <PackageReference Include="Lucene.Net">
+      <Version>3.0.3</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
