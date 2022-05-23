@@ -1,47 +1,47 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Manager
+namespace N_Manager
 {
-    class Manager
+    public class Manager
     {
-        private readonly List<Process> _Processes = new List<Process>();
-        public IReadOnlyList<Process> Processes { get { return _Processes; } }
+        public List<Func<Task<int>>> events = new List<Func<Task<int>>>();
+        public readonly List<Process> Processes = new List<Process>();
 
-        private readonly ConcurrentPriorityQueue<Process, int> _ProcessesQueue 
+        public readonly ConcurrentPriorityQueue<Process, int> ProcessesQueue
             = new ConcurrentPriorityQueue<Process, int>();
 
-        public readonly int quantTimeMS;
+        public int quantTimeMS;
 
         private Task _ProcessorTask;
         public void Run()
         {
             if (_ProcessorTask == null)
             {
+                Status = ManagerStatus.busy;
                 _ProcessorTask = _Processor();
             }
         }
 
-        public void Kill()
-        {
-            if (_ProcessorTask != null)
-            {
-                Status = ManagerStatus.aborted;
-                _ProcessorTask.Dispose();
-                _ProcessorTask = null;
-            }
-        }
-
-        private bool _exitWhenFree = false;
         public async Task AwaitExit()
         {
             if (_ProcessorTask != null)
             {
-                _exitWhenFree = true;
+                Status = ManagerStatus.aborted;
                 await _ProcessorTask;
+                _ProcessorTask = null;
             }
+        }
+
+        public async Task Reset()
+        {
+            var exit = AwaitExit();
+            Processes.Clear();
+            await exit;
+            await ProcessesQueue.ResetAsync();
         }
 
         public ManagerStatus Status { get; private set; }
@@ -59,10 +59,10 @@ namespace Manager
         /// <param name="process"> - добавляемый процесс</param>
         public async Task<bool> AddProcess(Process process)
         {
-            if (_Processes.Find((a) => a.Id == process.Id) != null) return false;
+            if (Processes.Find((a) => a.Id == process.Id) != null) return false;
 
-            _Processes.Add(process);
-            await _ProcessesQueue.EnqueueAsync(process, process.Priority);
+            Processes.Add(process);
+            await ProcessesQueue.EnqueueAsync(process, process.Priority);
             return true;
         }
 
@@ -82,43 +82,45 @@ namespace Manager
         {
             bool isDelete = false;
 
-            foreach (var elem in _Processes)
+            foreach (var elem in Processes)
             {
                 if (!elem.IsAlive)
                 {
                     isDelete = true;
-                    _Processes.Remove(elem);
+                    Processes.Remove(elem);
                 }
             }
 
             return isDelete;
         }
 
+        public async void RunEvents()
+        {
+            foreach (var eve in events)
+            {
+                await eve();
+            }
+        }
+
         private async Task _Processor()
         {
-            Status = ManagerStatus.busy;
-
             while (Status != ManagerStatus.aborted)
             {
-                if (Status != ManagerStatus.aborted)
+                RunEvents();
+
+                var process = await ProcessesQueue.DequeueAsync();
+                if (process == null)
                 {
-                    if (await _ProcessesQueue.CountAsync() == 0)
-                    {
-                        Status = ManagerStatus.free;
-                        if (_exitWhenFree == true) break;
+                    await Task.Delay(quantTimeMS);
+                }
+                else
+                {
+                    await Task.Delay(quantTimeMS);
+                    process.Size -= 1;
 
-                        await Task.Delay(quantTimeMS);
-                    }
-                    else
+                    if (process.IsAlive)
                     {
-                        Status = ManagerStatus.busy;
-                        var process = await _ProcessesQueue.DequeueAsync();
-                        Console.WriteLine($"Обработка процесса {process.Name}");
-                        process.Size -= 1;
-
-                        await Task.Delay(quantTimeMS);
-                        if (process.IsAlive)
-                            await _ProcessesQueue.EnqueueAsync(process, process.Priority);
+                        await ProcessesQueue.EnqueueAsync(process, process.Priority);
                     }
 
                 }
@@ -126,18 +128,8 @@ namespace Manager
         }
     }
 
-    public class ReverserComparer<TKey> : IComparer<TKey> where TKey : struct
+    public enum ManagerStatus
     {
-        // Call CaseInsensitiveComparer.Compare with the parameters reversed.
-        int IComparer<TKey>.Compare(TKey x, TKey y)
-        {
-            return ((new CaseInsensitiveComparer()).Compare(y, x));
-        }
-    }
-
-    enum ManagerStatus
-    {
-        free,
         busy,
         aborted
     }
@@ -150,7 +142,12 @@ namespace Manager
         public int InitialSize { get; set; }
         public int Size { get; set; }
         public bool IsAlive { get => Size != 0; }
-        public double CompletePercentage { get => 100.0 - (Size * 100.0 / InitialSize ); }
+        public double CompletePercentage { get => 100.0 - (Size * 100.0 / InitialSize); }
+
+        public override string ToString()
+        {
+            return $"Process {Name}: Id:{Id}, Priority:{Priority}, InitialSize:{InitialSize}";
+        }
 
         //public Process(int id, string name, int priority, int initialSize)
         //{
@@ -161,11 +158,11 @@ namespace Manager
         //}
     }
 
-    class ConcurrentPriorityQueue<TElement, TKey>
+    public class ConcurrentPriorityQueue<TElement, TKey>
         where TElement : class
         where TKey : IComparable<TKey>
     {
-        private readonly PriorityQueue<TElement, TKey> _Queue = new PriorityQueue<TElement, TKey>();
+        private readonly PriorityQueue<TElement, TKey> _queue = new PriorityQueue<TElement, TKey>();
         private bool _queueIsFree = true;
 
         public async Task EnqueueAsync(TElement process, TKey priority)
@@ -176,7 +173,7 @@ namespace Manager
             });
 
             _queueIsFree = false;
-            _Queue.Enqueue(process, priority);
+            _queue.Enqueue(process, priority);
             _queueIsFree = true;
         }
 
@@ -188,8 +185,7 @@ namespace Manager
             });
 
             _queueIsFree = false;
-            if (_Queue.Count == 0) return null;
-            var process = _Queue.Dequeue();
+            var process = _queue.Count == 0 ? null : _queue.Dequeue();
             _queueIsFree = true;
 
             return process;
@@ -203,13 +199,13 @@ namespace Manager
             });
 
             _queueIsFree = false;
-            var size = _Queue.Count;
+            var size = _queue.Count;
             _queueIsFree = true;
 
             return size;
         }
 
-        public async Task<List<TElement>> GetElementsAsync()
+        public async Task<List<TElement>> GetListAsync()
         {
             await Task.Factory.StartNew(() =>
             {
@@ -217,14 +213,28 @@ namespace Manager
             });
 
             _queueIsFree = false;
-            var list = _Queue.GetList();
+            var list = _queue.GetList();
             _queueIsFree = true;
 
             return list;
         }
+
+        public async Task ResetAsync()
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                while (!_queueIsFree) ;
+            });
+
+            _queueIsFree = false;
+            _queue.Reset();
+            _queueIsFree = true;
+
+            return;
+        }
     }
 
-    class PriorityQueue<TElement, TKey>
+    public class PriorityQueue<TElement, TKey>
         where TElement : class
         where TKey : IComparable<TKey>
     {
@@ -239,7 +249,10 @@ namespace Manager
         private readonly Elem _Tale = new Elem();
         private Elem _Last = null;
 
-        public PriorityQueue() { }
+        public PriorityQueue()
+        {
+            Count = 0;
+        }
 
         public void Enqueue(TElement element, TKey key)
         {
@@ -264,13 +277,14 @@ namespace Manager
 
         public TElement Dequeue()
         {
-            if (_Last == null)
+            if (Count == 0)
             {
                 return null;
             }
 
             var elem = _Last;
             _Last = elem.prev == _Tale ? null : elem.prev;
+            elem.prev.next = null;
             Count--;
             return elem.element;
         }
@@ -285,6 +299,13 @@ namespace Manager
                 elem = elem.next;
             }
             return list;
+        }
+
+        public void Reset()
+        {
+            _Tale.next = null;
+            _Last = null;
+            Count = 0;
         }
     }
 }
