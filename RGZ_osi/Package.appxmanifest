@@ -32,18 +32,15 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="RGZ_osi.App">
       <uap:VisualElements
-        DisplayName="Имитатор диспетчера ОС. Очередь с приоритетом"
+        DisplayName="Имитатор диспетчера ОС. Очередь с приоритетами"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Симулятор диспетчера процессов"
+        Description="Имитатор диспетчера процессов ОС на основе очереди с приоритетами. Работа является РГЗ по предмету Операционные системы, выполненной студентами ПМИ группы ПМ-01."
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
         <uap:InitialRotationPreference>
-          <uap:Rotation Preference="landscape"/>
-          <uap:Rotation Preference="landscapeFlipped"/>
-          <uap:Rotation Preference="portraitFlipped"/>
-          <uap:Rotation Preference="portrait"/></uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
       </uap:VisualElements>
     </Application>
   </Applications>

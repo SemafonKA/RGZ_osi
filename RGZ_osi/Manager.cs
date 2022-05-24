@@ -9,6 +9,7 @@ namespace N_Manager
     {
         public List<Func<Task<int>>> events = new List<Func<Task<int>>>();
         public readonly List<Process> Processes = new List<Process>();
+        public readonly List<Process> ExecutedProcesses = new List<Process>();
 
         public readonly ConcurrentPriorityQueue<Process, int> ProcessesQueue
             = new ConcurrentPriorityQueue<Process, int>();
@@ -39,6 +40,8 @@ namespace N_Manager
         {
             var exit = AwaitExit();
             Processes.Clear();
+            ExecutedProcesses.Clear();
+
             await exit;
             await ProcessesQueue.ResetAsync();
         }
@@ -88,6 +91,7 @@ namespace N_Manager
                     Processes.Remove(elem);
                 }
             }
+            ExecutedProcesses.Clear();
 
             return isDelete;
         }
@@ -120,7 +124,10 @@ namespace N_Manager
                     {
                         await ProcessesQueue.EnqueueAsync(process, process.Priority);
                     }
-
+                    else
+                    {
+                        ExecutedProcesses.Add(process);
+                    }
                 }
             }
         }
@@ -146,14 +153,6 @@ namespace N_Manager
         {
             return $"Process {Name}: Id:{Id}, Priority:{Priority}, InitialSize:{InitialSize}";
         }
-
-        //public Process(int id, string name, int priority, int initialSize)
-        //{
-        //    Id = id;
-        //    Name = name;
-        //    Priority = priority;
-        //    Size = InitialSize = initialSize;
-        //}
     }
 
     public class ConcurrentPriorityQueue<TElement, TKey>

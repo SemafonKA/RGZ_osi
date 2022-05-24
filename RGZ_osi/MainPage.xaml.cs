@@ -35,7 +35,7 @@ namespace RGZ_osi
 
             manager.events.Add(async () =>
             {
-                FinalizedProcessList.ItemsSource = manager.Processes.Where((e) => e.IsAlive == false);
+                FinalizedProcessList.ItemsSource = manager.ExecutedProcesses.ToList();
                 return 0;
             });
 #pragma warning restore CS1998
