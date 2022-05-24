@@ -1,21 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using N_Manager;
-using System.Threading.Tasks;
 
 namespace RGZ_osi
 {
@@ -35,7 +22,7 @@ namespace RGZ_osi
 
             manager.events.Add(async () =>
             {
-                ProcessQueueList.ItemsSource = await manager.ProcessesQueue.GetListAsync();
+                ProcessQueueList.ItemsSource = (await manager.ProcessesQueue.GetListAsync()).Reverse<Process>();
                 return 0;
             });
 

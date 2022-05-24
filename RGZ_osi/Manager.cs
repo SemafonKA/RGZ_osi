@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -65,7 +64,6 @@ namespace N_Manager
             await ProcessesQueue.EnqueueAsync(process, process.Priority);
             return true;
         }
-
 
         /// <summary>
         /// Удаляет из списка процессов те процессы, что уже завершили работу
@@ -167,70 +165,74 @@ namespace N_Manager
 
         public async Task EnqueueAsync(TElement process, TKey priority)
         {
-            await Task.Factory.StartNew(() =>
-            {
-                while (!_queueIsFree) ;
-            });
+            await Lock();
 
-            _queueIsFree = false;
             _queue.Enqueue(process, priority);
-            _queueIsFree = true;
+
+            Unlock();
         }
 
         public async Task<TElement> DequeueAsync()
         {
-            await Task.Factory.StartNew(() =>
-            {
-                while (!_queueIsFree) ;
-            });
+            await Lock();
 
-            _queueIsFree = false;
             var process = _queue.Count == 0 ? null : _queue.Dequeue();
-            _queueIsFree = true;
+
+            Unlock();
 
             return process;
         }
 
         public async Task<int> CountAsync()
         {
-            await Task.Factory.StartNew(() =>
-            {
-                while (!_queueIsFree) ;
-            });
+            await Lock();
 
-            _queueIsFree = false;
             var size = _queue.Count;
-            _queueIsFree = true;
+
+            Unlock();
 
             return size;
         }
 
         public async Task<List<TElement>> GetListAsync()
         {
-            await Task.Factory.StartNew(() =>
-            {
-                while (!_queueIsFree) ;
-            });
+            await Lock();
 
-            _queueIsFree = false;
             var list = _queue.GetList();
-            _queueIsFree = true;
+
+            Unlock();
 
             return list;
         }
 
         public async Task ResetAsync()
         {
+            await Lock();
+
+            _queue.Reset();
+            
+            Unlock();
+
+            return;
+        }
+
+        private async Task Lock()
+        {
+            Debug.WriteLine("***Queue try to lock");
             await Task.Factory.StartNew(() =>
             {
                 while (!_queueIsFree) ;
             });
 
             _queueIsFree = false;
-            _queue.Reset();
-            _queueIsFree = true;
 
-            return;
+            Debug.WriteLine("***Queue is locked");
+        }
+
+        private void Unlock()
+        {
+            _queueIsFree = true;
+            Debug.WriteLine("***Queue is unlocked");
         }
     }
 
